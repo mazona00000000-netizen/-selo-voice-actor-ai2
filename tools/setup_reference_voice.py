@@ -22,7 +22,7 @@ REFERENCES = ROOT / "references"
 def main() -> int:
     parser = argparse.ArgumentParser(description="إعداد عينة صوت مرجعية محلية")
     parser.add_argument("audio", help="ملف WAV")
-    parser.add_argument("transcript", help="الكلمات المنطوقة في التسجيل حرفيًا")
+    parser.add_argument("transcript", nargs="?", default="", help="اختياري: الكلمات المنطوقة حرفيًا (مطلوب لمحرك VoiceTut فقط)")
     parser.add_argument("--name", default="SeloVoice", help="اسم الصوت")
     args = parser.parse_args()
 
@@ -33,8 +33,6 @@ def main() -> int:
         parser.error("ملف الصوت غير موجود.")
     if source.suffix.lower() != ".wav":
         parser.error("حوّل التسجيل إلى WAV أولًا (PCM، قناة واحدة أو قناتان).")
-    if not transcript:
-        parser.error("النص المطابق للتسجيل مطلوب.")
     try:
         with wave.open(str(source), "rb") as wav:
             duration = wav.getnframes() / float(wav.getframerate())
@@ -54,6 +52,8 @@ def main() -> int:
     print(f"تم إعداد المرجع محليًا: {folder}")
     print(f"المدة: {duration:.1f}s | القنوات: {channels} | العينة: {rate} Hz")
     print("اختر الصوت 'SeloVoice' من جدول الأصوات بعد إعادة تشغيل التطبيق.")
+    if not transcript:
+        print("لم يُحفظ نص مرجعي؛ استخدم Chatterbox. محرك VoiceTut يحتاج النص المطابق في default.txt.")
     print("مهم: هذه عينة مرجعية للتوجيه الصوتي وليست تدريبًا أو استنساخًا مضمونًا للصوت.")
     return 0
 
